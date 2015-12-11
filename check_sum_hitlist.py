@@ -13,7 +13,7 @@ from flask import Flask, render_template, request, flash, url_for
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///new_test_db.sqlite', echo=True)
+engine = create_engine('sqlite:///dsa_db.sqlite', echo=True)
 Base = declarative_base()
 
 
@@ -155,8 +155,9 @@ def view():
         file_data = (file, current_check_sum)
         payload.append(file_data)
 
+    form = AddFile()
 
-    return render_template('check_sums.html', form=c_form,  check_sum_results=payload, u_name=user_name, h_name=hostname)
+    return render_template('check_sums.html', form=form,  check_sum_results=payload, u_name=user_name, h_name=hostname)
 
 
 @app.route('/delete', methods=['POST'])
@@ -170,6 +171,7 @@ def delete_entry():  # Testing
 
 @app.route('/add', methods=['POST'])
 def add_entry():
+    print("inside add_entry()")
     add_form = AddFile(request.form, prefix="add-hash")
     if add_form.validate():
         pass
