@@ -18,6 +18,9 @@ Base = declarative_base()
 
 
 class User(Base):
+    """
+        Session and data storage for users
+    """
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
@@ -31,6 +34,13 @@ class User(Base):
 
 
 class File(Base):
+    """
+        Child table for Users.
+
+        Stores file information such as:
+            - File check_sums
+            - File paths
+    """
     __tablename__ = 'files'
 
     id = Column(Integer, primary_key=True)
@@ -43,19 +53,20 @@ class File(Base):
         return "<File(file_path={})>".format(self.file_path)
 
 
+# Initialize SQL Tables and make connection to database
 Base.metadata.create_all(engine)
 # Session is the database communicator
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
-class RegistrationForm(Form):
+class AddFile(Form):
     new_file = TextField('New File', [validators.Required()])
 
 
-
-class DeleteForm(Form):
+class DeleteFile(Form):
     del_file = SubmitField('Delete')
+
 
 def hash_it(file_path):
     # start_time = perf_counter()
@@ -150,7 +161,7 @@ def view():
 
 @app.route('/delete', methods=['POST'])
 def delete_entry():  # Testing
-    del_form = RegistrationForm(request.form, prefix="Delete-form")
+    del_form = AddFile(request.form, prefix="Delete-form")
     if request.method == 'POST' and del_form.validate():
         print("Form: {}".format(del_form._method.data))
         session.query.filter(File.id == del_form.del_file.data).delete()
@@ -159,7 +170,7 @@ def delete_entry():  # Testing
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    add_form = RegistrationForm(request.form, prefix="add-hash")
+    add_form = AddFile(request.form, prefix="add-hash")
     if add_form.validate():
         pass
 
