@@ -4,7 +4,7 @@ from socket import gethostname
 from time import perf_counter
 
 from werkzeug.utils import redirect
-from wtforms import Form, BooleanField, TextField, PasswordField, validators, SubmitField
+from wtforms import Form, BooleanField, PasswordField, validators, SubmitField, StringField
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
@@ -61,7 +61,7 @@ session = Session()
 
 
 class AddFile(Form):
-    new_file = TextField('New File', [validators.Required()])
+    new_file = StringField('New File', [validators.DataRequired()])
 
 
 class DeleteFile(Form):
@@ -155,9 +155,8 @@ def view():
         file_data = (file, current_check_sum)
         payload.append(file_data)
 
-    form = AddFile()
 
-    return render_template('check_sums.html', form=form,  check_sum_results=payload, u_name=user_name, h_name=hostname)
+    return render_template('check_sums.html', form=AddFile(),  check_sum_results=payload, u_name=user_name, h_name=hostname)
 
 
 @app.route('/delete', methods=['POST'])
@@ -169,14 +168,14 @@ def delete_entry():  # Testing
     return redirect(url_for('index.html'))
 
 
-@app.route('/add', methods=['POST'])
+@app.route('/add_file', methods=['GET', 'POST'])
 def add_entry():
-    print("inside add_entry()")
-    add_form = AddFile(request.form, prefix="add-hash")
-    if add_form.validate():
-        pass
+    form = AddFile(request.form)
+    print(form)
+    if form.validate():
+        return redirect(url_for('view'))
 
-    return render_template('', )
+    return render_template('check_sums.html', form=form, )
 
 
 if __name__ == '__main__':

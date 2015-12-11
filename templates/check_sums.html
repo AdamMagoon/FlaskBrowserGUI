@@ -1,7 +1,7 @@
 {% extends "page/content.html" %}
 {% block content %}
 {% from "_formhelpers.html" import render_field %}
-<form method=post action="/">
+<form method="post" action="{{ url_for('add_entry') }}">
     <dl>
         {{ render_field(form.new_file) }}
     </dl>
