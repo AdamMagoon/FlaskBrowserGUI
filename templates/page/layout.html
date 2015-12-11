@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Adammagoon92@gmail.com">
+    <title>{% if title %}{{ title }}{% else %}Welcome to Adammagoon.com{% endif %}</title>
+    {% block addToCss %}{% endblock %}
+    {% include 'page/head.html' %}
+    {% block addToJs %}{% endblock %}
+</head>
+<body>
+<div id="wrapper">
+    {% include 'page/sidebar.html' %}
+    {% block contentWrapper %}{% endblock %}
+</div>
+</body>
+<!-- Menu Toggle Script -->
+<script>
+$("#menu-toggle").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+
+    if ($('#menuIndicator').hasClass('glyphicon-menu-left')) {
+        $('#menuIndicator').switchClass('glyphicon-menu-left', 'glyphicon-menu-right');
+    }
+    else {
+        $('#menuIndicator').switchClass('glyphicon-menu-right', 'glyphicon-menu-left');
+    }
+});
+
+</script>
+</html>

@@ -1,0 +1,25 @@
+{% extends 'page/layout.html' %}
+{% block contentWrapper %}
+<!-- Page Content -->
+<div class="navbar" >
+    <div class="" href="#menu-toggle" id="menu-toggle">
+        <span id="menuIndicator" class="glyphicon glyphicon-menu-left"></span>
+    </div>
+    {% if title %}<div class="col-lg-12 text-center"><h1 class="pageTitle">{{ title }}</h1></div>{% endif %}
+</div>
+<div id="page-content-wrapper">
+    <div class="container-fluid">
+        <div id="content-container" class="row">
+            {% block content %}{% endblock %}
+            <div class="col-lg-12">
+                <h1>Simple Sidebar</h1>
+                <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller
+                    screens, and will appear non-collapsed on larger screens. When toggled using the button below, the
+                    menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
+                <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /#page-content-wrapper -->
+{% endblock %}

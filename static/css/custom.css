@@ -1,0 +1,34 @@
+
+/* Elements */
+ul {
+    list-style:none;
+    list-style-position: inside;
+}
+
+/* Sidebar */
+ul.sidebar-nav {
+    font-size:1.2em;
+}
+
+/* Element specific classes */
+h1.pageTitle {color: #888;}
+h2#keys {margin-top:0px;}
+h4 img {width: 1.3em;}
+span#menuIndicator {font-size:1.3em;}
+ul.sidebar-nav li.active a {color: #fff; background: rgba(255,255,255,0.2);}
+
+/* Bootstrap overrides */
+.well {margin-top:1em;}
+
+/* Development tools */
+.show-outline {outline: 2px solid orange;min-height:150px;}
+
+/* My custom classes */
+div#content-container div {min-height: 150px;}
+
+/* Favorat styling */
+div.favorat-content h2 {text-align:center;}
+ul.reddit-list li {padding: 1em;}
+ul.reddit-list li a {text-align:center;}
+.glyphicon-arrow-up {color:orange;}
+

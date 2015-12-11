@@ -1,0 +1,32 @@
+{% set navigation_bar = [
+    ('/', 'dashboard', 'Dashboard'),
+    ('/about', 'about', 'About'),
+    ('/contact', 'contact', 'Contact'),
+    ('/favorat_sites', 'favorat', 'Favorite Websites')
+] -%}
+
+{% set unique_nav = [
+    ('/geomap', 'geomap', 'Geomap')
+] %}
+
+{% set active_page = active_page|default('dashboard') -%}
+
+<!-- Sidebar -->
+<div id="sidebar-wrapper">
+    <ul class="sidebar-nav">
+        <li class="sidebar-brand">
+            <a href="/">Adam Magoon<span>Web Technologies</span>
+            </a>
+        </li>
+        {% for href, id, caption in navigation_bar %}
+        <li {% if id == active_page %}class="active"{% endif %} id="{{ id|e }}" >
+            <a href="{{ href|e }}" >{{ caption }}</a>
+        </li>
+        {% endfor %}
+        {% for href, id, caption in unique_nav %}
+        <li class="nav-unique {% if id == active_page %}active{% endif %}" id="{{ id|e }}">
+            <a href="{{ href|e }}">{{ caption }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>

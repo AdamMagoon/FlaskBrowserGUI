@@ -1,0 +1,26 @@
+{% extends "page/content.html" %}
+{% block content %}
+{% from "_formhelpers.html" import render_field %}
+<form method=post action="/">
+    <dl>
+        {{ render_field(form.new_file) }}
+    </dl>
+    <p><input type=submit value="Add File">
+</form>
+
+<div class="checkSumWrapper">
+
+    <h2>User: {{ u_name }} - {{ h_name }} </h2>
+    {% for file_object, checksum in check_sum_results -%}
+    <form method="post" action="{{ url_for('delete_entry') }}">
+        <input type="hidden" name="_method" value="{{ file_object.check_sum }}" />
+        <h3 class="checkSumFile">{{ file_object.file_path }} <input class="btn btn-danger" type="submit" value="Delete" /></h3>
+        <ul>
+            <li>Current Check Sum: <span class="checkSum">{{ checksum }}</span></li>
+            <li>Stored Check Sum: <span class="checkSum">{{ file_object.check_sum }}</span></li>
+        </ul>
+    </form>
+    {% endfor %}
+</div>
+
+{% endblock %}

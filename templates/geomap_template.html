@@ -1,0 +1,68 @@
+{% extends 'page/content.html' %}
+{% block addToCss %}
+<style type="text/css">
+    h4 img {
+    width: 1.3em;
+    }
+    h2#keys {margin-top:0px;}
+    .well {margin-top:1em;}
+</style>
+{% endblock %}
+{% block addToJs %}
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+        google.load('visualization', '1', { 'packages': ['map'] });
+        google.setOnLoadCallback(drawMap);
+
+        function drawMap() {
+          var data = new google.visualization.DataTable();
+
+          data.addColumn('string', 'Location');
+          data.addColumn('string', 'Sales');
+          data.addColumn('string', 'Marker');
+
+          data.addRows({{ js_content|safe }});
+        var url = 'http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/';
+        var options = {
+             showTip: true,
+             icons: {
+                  blue: {
+                    normal:   url + 'Map-Marker-Ball-Azure-icon.png',
+                    selected: url + 'Map-Marker-Ball-Right-Azure-icon.png'
+                  },
+                  green: {
+                    normal:   url + 'Map-Marker-Push-Pin-1-Chartreuse-icon.png',
+                    selected: url + 'Map-Marker-Push-Pin-1-Right-Chartreuse-icon.png'
+                  },
+                  pink: {
+                    normal:   url + 'Map-Marker-Ball-Pink-icon.png',
+                    selected: url + 'Map-Marker-Ball-Right-Pink-icon.png'
+                  }
+             }
+        }
+
+        var map = new google.visualization.Map(document.getElementById('chart_div'));
+
+        map.draw(data, options);
+        };
+
+</script>
+{% endblock %}
+{% block content %}
+<div style="height:500px;" id="chart_div"></div>
+<div class="well col-xs-12">
+    <h2 class="col-sm-12 text-center" id="keys">Keys:</h2>
+
+    <h3 class="col-xs-12 col-sm-4 text-center">1000+ Sales: <img
+            src="http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Push-Pin-1-Chartreuse-icon.png"/>
+    </h3>
+
+    <h3 class="col-xs-12 col-sm-4 text-center">300 - 1000 Sales: <img
+            src="http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Azure-icon.png"/>
+    </h3>
+
+    <h3 class="col-xs-12 col-sm-4 text-center">0 - 299 Sales: <img
+            src="http://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Ball-Pink-icon.png"/>
+    </h3>
+</div>
+{% endblock %}
