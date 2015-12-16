@@ -4,7 +4,7 @@ from socket import gethostname
 from time import perf_counter
 
 from werkzeug.utils import redirect
-from wtforms import Form, BooleanField, PasswordField, validators, SubmitField, StringField
+from wtforms import Form, BooleanField, PasswordField, validators, SubmitField, StringField, HiddenField
 import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
@@ -13,7 +13,7 @@ from flask import Flask, render_template, request, flash, url_for
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///dsa_db.sqlite', echo=True)
+engine = create_engine('sqlite:///dsa_db.sqlite', echo=False)
 Base = declarative_base()
 
 
@@ -65,7 +65,8 @@ class AddFile(Form):
 
 
 class DeleteFile(Form):
-    del_file = SubmitField('Delete')
+    # del_file = SubmitField('Delete')
+    del_file = HiddenField('del_value')
 
 
 def hash_it(file_path):
@@ -104,10 +105,19 @@ def check_sum_all(files):
     return check_sum_results
 
 
-def add_file(file, check_sum):
-    session.add(File(file_path=file, check_sum=check_sum))
+def add_file(user, file, check_sum):
+    f = File(file_path=file, check_sum=check_sum)
+    user.files.append(f)
+    session.add(user)
     session.commit()
     return
+
+
+def delete_file(user, file):
+    check_sum = session.query(File.check_sum).filter(File.file_path == file)
+    print("delete file check_sum query: {}".format(check_sum))
+    f = File(file_path=file, check_sum=check_sum)
+    quit()
 
 
 def get_stored_files(user):
@@ -155,31 +165,41 @@ def view():
         file_data = (file, current_check_sum)
         payload.append(file_data)
 
-
-    return render_template('check_sums.html', form=AddFile(),  check_sum_results=payload, u_name=user_name, h_name=hostname)
+    return render_template('check_sums.html', form=AddFile(), check_sum_results=payload, u_name=user_name,
+                           h_name=hostname)
 
 
 @app.route('/delete', methods=['POST'])
 def delete_entry():  # Testing
-    del_form = AddFile(request.form, prefix="Delete-form")
-    if request.method == 'POST' and del_form.validate():
-        print("Form: {}".format(del_form._method.data))
-        session.query.filter(File.id == del_form.del_file.data).delete()
-    return redirect(url_for('index.html'))
+    if request.method == 'POST':
+        user = get_user_session()
+        form = request.form.getlist('del_value')
+        del_file = form[0]  # hash value of file
+
+        s = session.query(File).filter(File.check_sum == del_file).delete()
+        print("Session query for hash value = {}\nType: {}".format(s, type(s)))
+    return redirect(url_for('view'))
 
 
 @app.route('/add_file', methods=['GET', 'POST'])
 def add_entry():
+    import os
     form = AddFile(request.form)
-    print(form)
-    if form.validate():
-        return redirect(url_for('view'))
+    new_file = form.new_file._value().replace("\"", '')  # File path
+    is_file = os.path.isfile(new_file)
 
-    return render_template('check_sums.html', form=form, )
+    if form.validate() and is_file:
+        user = get_user_session()
+        hash_val = hash_it(new_file)
+        add_file(user, new_file, hash_val)
+
+        return redirect(url_for('view'))
+    else:
+        flash("File doesn't exist. Check your file path.")
+        return redirect(url_for('view'))
 
 
 if __name__ == '__main__':
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.run(port=80, debug=True)
-

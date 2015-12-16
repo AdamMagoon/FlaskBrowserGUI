@@ -1,5 +1,14 @@
 {% extends "page/content.html" %}
 {% block content %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 {% from "_formhelpers.html" import render_field %}
 <form method="post" action="{{ url_for('add_entry') }}">
     <dl>
@@ -12,8 +21,8 @@
 
     <h2>User: {{ u_name }} - {{ h_name }} </h2>
     {% for file_object, checksum in check_sum_results -%}
-    <form method="post" action="{{ url_for('delete_entry') }}">
-        <input type="hidden" name="_method" value="{{ file_object.check_sum }}" />
+    <form method="post" name="delete" action="{{ url_for('delete_entry') }}">
+        <input type="hidden" name="del_value" value="{{ file_object.check_sum }}" />
         <h3 class="checkSumFile">{{ file_object.file_path }} <input class="btn btn-danger" type="submit" value="Delete" /></h3>
         <ul>
             <li>Current Check Sum: <span class="checkSum">{{ checksum }}</span></li>
