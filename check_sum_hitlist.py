@@ -1,11 +1,10 @@
 import hashlib as h
+import sqlalchemy
 from os import getenv
 from socket import gethostname
-from time import perf_counter
-
 from werkzeug.utils import redirect
-from wtforms import Form, BooleanField, PasswordField, validators, SubmitField, StringField, HiddenField
-import sqlalchemy
+from wtforms import Form, validators, StringField, HiddenField
+from sqlalchemy import update
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref
@@ -169,11 +168,49 @@ def view():
                            h_name=hostname)
 
 
+@app.route('/handle_form', methods=['POST'])
+def handle_form():
+
+    user = get_user_session()
+
+    def query_form(var_name):
+        return request.form.getlist(var_name)
+
+    clicked = query_form('clicked')[0]
+    del_val = query_form('del_value')[0]
+    path = query_form('path')[0]
+    new_checksum = query_form('new_checksum')[0]
+    print("New checksum: {}".format(new_checksum))
+
+
+    if clicked == 'delete':
+        session.query(File).filter(File.check_sum == del_val).delete()
+
+    elif clicked == 'open':
+        from os import system
+        from os.path import dirname
+        folder = dirname(path)
+        print(folder)
+        system('explorer {}'.format(folder))
+
+    elif clicked == 'update':
+        session.query(File).filter(File.check_sum == del_val).update({"check_sum": (new_checksum)})
+        session.commit()
+
+    print('clicked: {}\nType: {}'.format(clicked, type(clicked)))
+    print('del_value: {}'.format(del_val))
+
+    return redirect(url_for('view'))
+
+
 @app.route('/delete', methods=['POST'])
 def delete_entry():  # Testing
+    print("yesssirrr")
     if request.method == 'POST':
         user = get_user_session()
         form = request.form.getlist('del_value')
+        new_test_val = request.form.getlist('delete')
+        print("new_test_value = {}\nType: {}".format(new_test_val, type(new_test_val)))
         del_file = form[0]  # hash value of file
 
         s = session.query(File).filter(File.check_sum == del_file).delete()

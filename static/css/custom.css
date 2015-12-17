@@ -24,11 +24,27 @@ ul.sidebar-nav li.active a {color: #fff; background: rgba(255,255,255,0.2);}
 .show-outline {outline: 2px solid orange;min-height:150px;}
 
 /* My custom classes */
-div#content-container div {min-height: 150px;}
+/* div#content-container div {min-height: 150px;} */
 
 /* Favorat styling */
 div.favorat-content h2 {text-align:center;}
 ul.reddit-list li {padding: 1em;}
 ul.reddit-list li a {text-align:center;}
 .glyphicon-arrow-up {color:orange;}
+
+/* Checksum values */
+ul.dropdown-menu li.checksum-action {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: 400;
+    line-height: 1.42857143;
+    white-space: nowrap;
+    cursor: pointer;
+    }
+ul.dropdown-menu li.checksum-action:hover {
+    color: #262626;
+    text-decoration: none;
+    background-color: #f5f5f5;
+    }
 

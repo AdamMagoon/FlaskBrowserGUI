@@ -21,13 +21,28 @@
 
     <h2>User: {{ u_name }} - {{ h_name }} </h2>
     {% for file_object, checksum in check_sum_results -%}
-    <form method="post" name="delete" action="{{ url_for('delete_entry') }}">
+    {% set checksum_valid = checksum == file_object.check_sum %}
+    {% set file_path = file_object.file_path %}
+    <form method="post" name="handle_file" id="handle_file" action="{{ url_for('handle_form') }}" >
         <input type="hidden" name="del_value" value="{{ file_object.check_sum }}" />
-        <h3 class="checkSumFile">{{ file_object.file_path }} <input class="btn btn-danger" type="submit" value="Delete" /></h3>
-        <ul>
-            <li>Current Check Sum: <span class="checkSum">{{ checksum }}</span></li>
-            <li>Stored Check Sum: <span class="checkSum">{{ file_object.check_sum }}</span></li>
-        </ul>
+        <input type="hidden" name="clicked" id="clicked" />
+        <input type="hidden" name="path" value="{{ file_path }}"/>
+        <input type="hidden" name="new_checksum" value="{{ checksum }}" />
+        <h3 class="checkSumFile">{{ file_path }} <!--<input class="btn btn-danger" type="submit" value="Delete" />--></h3>
+        <div class="btn-group">
+              <button type="submit" class="btn btn-{% if checksum_valid %}success{% else %}warning{% endif %} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ checksum }}<span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                  <li class="checksum-action" onclick="$('#clicked').val('update'); $('#handle_file').submit();" >Update</li>
+                  <li class="checksum-action" onclick="$('#clicked').val('open'); $('#handle_file').submit();" >Open File Location</li>
+                  <li role="separator" class="divider"></li>
+                  <li class="checksum-action" onclick="$('#clicked').val('delete'); $('#handle_file').submit();" >Remove</li>
+              </ul>
+        </div>
+        <!--<ul>-->
+            <!--<li class="label label-danger">Current: {{ checksum }}</li>-->
+            <!--<li class="label label-danger">On File: {{ file_object.check_sum }}</li>-->
+
+        <!--</ul>-->
     </form>
     {% endfor %}
 </div>
