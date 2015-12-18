@@ -26,31 +26,31 @@
         <input type="hidden" name="clicked" id="clicked" />
         <input type="hidden" name="path" id="path" />
         <input type="hidden" name="new_checksum" id="new_checksum" />
-        {% for file_object, checksum in check_sum_results -%}
-            {% set checksum_valid = checksum == file_object.check_sum %}
-            {% set file_path = file_object.file_path %}
-
-            <h3 class="checkSumFile">{{ file_path }}
-                <!--<input class="btn btn-danger" type="submit" value="Delete" />-->
-            </h3>
-            <div class="btn-group">
-                <button type="submit" class="btn btn-{% if checksum_valid %}success{% else %}warning{% endif %} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ checksum }}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu">
-                          {% set file_path = file_path.replace('\\', '\\\\') %}
-
-                    <li class="checksum-action" onclick="$('#clicked').val('update'); $('#del_value').val('{{ file_object.check_sum }}'); $('#path').val('{{ file_path }}'); $('#new_checksum').val('{{ checksum }}'); $('#handle_file').submit();" >Update</li>
-                    <li class="checksum-action" onclick="$('#clicked').val('open'); $('#path').val('{{ file_path|safe }}'); $('#handle_file').submit();" >Open File Location</li>
-                    <li role="separator" class="divider"></li>
-                    <li class="checksum-action" onclick="$('#clicked').val('delete'); $('#del_value').val('{{ file_object.check_sum }}'); $('#handle_file').submit();" >Remove</li>
-                </ul>
-            </div>
-            <!--<ul>-->
-            <!--<li class="label label-danger">Current: {{ checksum }}</li>-->
-            <!--<li class="label label-danger">On File: {{ file_object.check_sum }}</li>-->
-            <!--</ul>-->
     </form>
+    {% for file_object, checksum in check_sum_results -%}
+        {% set checksum_valid = checksum == file_object.check_sum %}
+        {% set file_path = file_object.file_path %}
+
+        <h3 class="checkSumFile">{{ file_path }}
+            <!--<input class="btn btn-danger" type="submit" value="Delete" />-->
+        </h3>
+        <div class="btn-group">
+            <button type="submit" class="btn btn-{% if checksum_valid %}success{% else %}warning{% endif %} dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ checksum }}
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                      {% set file_path = file_path.replace('\\', '\\\\') %}
+
+                <li class="checksum-action" onclick="$('#clicked').val('update'); $('#del_value').val('{{ file_object.check_sum }}'); $('#path').val('{{ file_path }}'); $('#new_checksum').val('{{ checksum }}'); $('#handle_file').submit();" >Update</li>
+                <li class="checksum-action" onclick="$('#clicked').val('open'); $('#path').val('{{ file_path|safe }}'); $('#handle_file').submit();" >Open File Location</li>
+                <li role="separator" class="divider"></li>
+                <li class="checksum-action" onclick="$('#clicked').val('delete'); $('#del_value').val('{{ file_object.check_sum }}'); $('#handle_file').submit();" >Remove</li>
+            </ul>
+        </div>
+        <!--<ul>-->
+        <!--<li class="label label-danger">Current: {{ checksum }}</li>-->
+        <!--<li class="label label-danger">On File: {{ file_object.check_sum }}</li>-->
+        <!--</ul>-->
     {% endfor %}
 </div>
 

@@ -162,6 +162,7 @@ def handle_form():
 
     if clicked == 'delete':
         session.query(File).filter(File.check_sum == del_val).delete()
+        session.commit()
 
     elif clicked == 'open':
         from os import system
