@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, flash, url_for
 
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///dsa_db.sqlite', echo=False)
+engine = create_engine('sqlite:///dsa_db.sqlite', echo=True)
 Base = declarative_base()
 
 
@@ -152,7 +152,6 @@ def get_user_session():
 
 @app.route('/handle_form', methods=['POST'])
 def handle_form():
-
     def query_form(var_name):
         return request.form.getlist(var_name)
 
@@ -172,7 +171,8 @@ def handle_form():
         system('explorer {}'.format(folder))
 
     elif clicked == 'update':
-        session.query(File).filter(File.check_sum == del_val).update({"check_sum": (new_checksum)})
+        print("Update - new_checksum: {}\nOld checksum: {}".format(new_checksum, del_val))
+        session.query(File).filter(File.check_sum == del_val).update({"check_sum": new_checksum})
         session.commit()
 
     return redirect(url_for('view'))
