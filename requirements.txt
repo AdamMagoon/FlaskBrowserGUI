@@ -1,0 +1,5 @@
+Flask==0.10.1
+Flask-Login==0.3.2
+backports.pbkdf2==0.1
+wtforms==2.0.2
+sqlalchemy==1.0.9
