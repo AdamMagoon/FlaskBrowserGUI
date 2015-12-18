@@ -78,7 +78,6 @@ class HandleFile(Form):
 
 def hash_it(file_path):
     # start_time = perf_counter()
-    print("Hash file path: {}".format(file_path))
     hasher = h.md5()  # Type of hash we are using
     block_size = 65536
 
@@ -101,7 +100,6 @@ def check_sum_all(files):
         db_check = session.query(File).filter(File.check_sum == chk_sum).first()
 
         payload = (file, chk_sum, db_check)
-        print("check_sum_all.payload = {}".format(payload))
         check_sum_results.append(payload)
 
         # Shoot off bits of data via AJAX ???
@@ -122,9 +120,7 @@ def add_file(user, file, check_sum):
 
 def delete_file(user, file):
     check_sum = session.query(File.check_sum).filter(File.file_path == file)
-    print("delete file check_sum query: {}".format(check_sum))
     f = File(file_path=file, check_sum=check_sum)
-    quit()
 
 
 def get_stored_files(user):
@@ -139,7 +135,6 @@ def get_stored_files(user):
 def get_user_session():
     # User data acquired by os.getenv() and socket.gethostname()
     user_name = getenv('username')  # Client username ['amagoon']
-    print("User Name: {}, Type: {}".format(user_name, type(user_name)))
     hostname = gethostname()  # Client hostname ['dsa-LT4']
 
     # DB session initialization
@@ -158,8 +153,6 @@ def get_user_session():
 @app.route('/handle_form', methods=['POST'])
 def handle_form():
 
-    print("I'm in this bitch, yo")
-
     def query_form(var_name):
         return request.form.getlist(var_name)
 
@@ -167,7 +160,6 @@ def handle_form():
     del_val = query_form('del_value')[0]
 
     new_checksum = query_form('new_checksum')[0]
-    print("New checksum: {}".format(new_checksum))
 
     if clicked == 'delete':
         session.query(File).filter(File.check_sum == del_val).delete()
@@ -176,16 +168,12 @@ def handle_form():
         from os import system
         from os.path import dirname
         path = query_form('path')[0]
-        print("Path! {}".format(path))
         folder = dirname(path)
         system('explorer {}'.format(folder))
 
     elif clicked == 'update':
         session.query(File).filter(File.check_sum == del_val).update({"check_sum": (new_checksum)})
         session.commit()
-
-    print('clicked: {}\nType: {}'.format(clicked, type(clicked)))
-    print('del_value: {}'.format(del_val))
 
     return redirect(url_for('view'))
 
@@ -229,7 +217,6 @@ def view():
 
     # Here's our user
     user = get_user_session()
-    print("user: {}\nType: {}".format(user, type(user)))
     user_name = user.u_name
     hostname = user.hostname
     stored = user.files
