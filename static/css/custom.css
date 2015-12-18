@@ -23,9 +23,6 @@ ul.sidebar-nav li.active a {color: #fff; background: rgba(255,255,255,0.2);}
 /* Development tools */
 .show-outline {outline: 2px solid orange;min-height:150px;}
 
-/* My custom classes */
-/* div#content-container div {min-height: 150px;} */
-
 /* Favorat styling */
 div.favorat-content h2 {text-align:center;}
 ul.reddit-list li {padding: 1em;}
