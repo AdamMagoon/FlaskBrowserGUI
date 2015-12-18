@@ -3,8 +3,7 @@ import sqlalchemy
 from os import getenv
 from socket import gethostname
 from werkzeug.utils import redirect
-from wtforms import Form, validators, StringField, HiddenField
-from sqlalchemy import update
+from wtforms import Form, validators, StringField, HiddenField, SubmitField
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref
@@ -66,6 +65,15 @@ class AddFile(Form):
 class DeleteFile(Form):
     # del_file = SubmitField('Delete')
     del_file = HiddenField('del_value')
+
+
+class HandleFile(Form):
+    del_value = HiddenField('del_value')
+    clicked = HiddenField('clicked')
+    path = HiddenField('path')
+    new_checksum = HiddenField('new_checksum')
+
+    pass
 
 
 def hash_it(file_path):
@@ -147,41 +155,19 @@ def get_user_session():
     return user_q
 
 
-@app.route('/', methods=['GET', 'POST'])
-def view():
-    payload = []  # Return values | list of tuples
-
-    # Here's our user
-    user = get_user_session()
-    print("user: {}\nType: {}".format(user, type(user)))
-    user_name = user.u_name
-    hostname = user.hostname
-    stored = user.files
-
-    for file in stored:
-        fp = file.file_path
-        current_check_sum = hash_it(fp)  # Function that goes to hash the file right now
-        file_data = (file, current_check_sum)
-        payload.append(file_data)
-
-    return render_template('check_sums.html', form=AddFile(), check_sum_results=payload, u_name=user_name,
-                           h_name=hostname)
-
-
 @app.route('/handle_form', methods=['POST'])
 def handle_form():
 
-    user = get_user_session()
+    print("I'm in this bitch, yo")
 
     def query_form(var_name):
         return request.form.getlist(var_name)
 
     clicked = query_form('clicked')[0]
     del_val = query_form('del_value')[0]
-    path = query_form('path')[0]
+
     new_checksum = query_form('new_checksum')[0]
     print("New checksum: {}".format(new_checksum))
-
 
     if clicked == 'delete':
         session.query(File).filter(File.check_sum == del_val).delete()
@@ -189,8 +175,9 @@ def handle_form():
     elif clicked == 'open':
         from os import system
         from os.path import dirname
+        path = query_form('path')[0]
+        print("Path! {}".format(path))
         folder = dirname(path)
-        print(folder)
         system('explorer {}'.format(folder))
 
     elif clicked == 'update':
@@ -234,6 +221,28 @@ def add_entry():
     else:
         flash("File doesn't exist. Check your file path.")
         return redirect(url_for('view'))
+
+
+@app.route('/', methods=['GET', 'POST'])
+def view():
+    payload = []  # Return values | list of tuples
+
+    # Here's our user
+    user = get_user_session()
+    print("user: {}\nType: {}".format(user, type(user)))
+    user_name = user.u_name
+    hostname = user.hostname
+    stored = user.files
+
+    for file in stored:
+        fp = file.file_path
+        current_check_sum = hash_it(fp)  # Function that goes to hash the file right now
+        file.file_path = file.file_path
+        file_data = (file, current_check_sum)
+        payload.append(file_data)
+
+    return render_template('check_sums.html', form=AddFile(), check_sum_results=payload, u_name=user_name,
+                           h_name=hostname)
 
 
 if __name__ == '__main__':
