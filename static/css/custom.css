@@ -45,3 +45,9 @@ ul.dropdown-menu li.checksum-action:hover {
     background-color: #f5f5f5;
     }
 
+form .btn-sm {
+    padding: 0.2em 1em;
+    font-size: 15px;
+    line-height: 1.5;
+    border-radius: 3px;
+}

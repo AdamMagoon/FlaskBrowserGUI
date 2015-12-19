@@ -9,9 +9,10 @@ from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from flask import Flask, render_template, request, flash, url_for
 
+
 app = Flask(__name__)
 
-engine = create_engine('sqlite:///dsa_db.sqlite', echo=True)
+engine = create_engine('sqlite:///local_db.sqlite', echo=False)
 Base = declarative_base()
 
 
@@ -26,6 +27,7 @@ class User(Base):
     u_name = Column(String)
 
     files = relationship('File', backref='users')
+    directories = relationship('Directory', backref='users')
 
     def __repr__(self):
         return "<User(hostname={}, u_name={}, files={})>".format(self.hostname, self.u_name, self.files)
@@ -51,6 +53,18 @@ class File(Base):
         return "<File(file_path={})>".format(self.file_path)
 
 
+class Directory(Base):
+    __tablename__ = 'dirs'
+
+    id = Column(Integer, primary_key=True)
+    dir_path = Column(String)
+
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    def __repr__(self):
+        return "<Directory(dir_path={}, files={})>".format(self.dir_path, self.files)
+
+
 # Initialize SQL Tables and make connection to database
 Base.metadata.create_all(engine)
 # Session is the database communicator
@@ -72,8 +86,6 @@ class HandleFile(Form):
     clicked = HiddenField('clicked')
     path = HiddenField('path')
     new_checksum = HiddenField('new_checksum')
-
-    pass
 
 
 def hash_it(file_path):
@@ -110,12 +122,24 @@ def check_sum_all(files):
     return check_sum_results
 
 
-def add_file(user, file, check_sum):
-    f = File(file_path=file, check_sum=check_sum)
-    user.files.append(f)
+def add_file_object(user, path, check_sum):
+    from os.path import dirname
+
+    if path == dirname(path):
+        from os import listdir
+
+        for file in listdir(path):
+            check_sum = hash_it(file)
+            file_object = File(file_path=file, check_sum=check_sum)
+
+        # new_object = get_directory_object()
+
+    else:
+        new_object = File(file_path=path, check_sum=check_sum)
+
+    user.files.append(new_object)
     session.add(user)
     session.commit()
-    return
 
 
 def delete_file(user, file):
@@ -194,17 +218,23 @@ def delete_entry():  # Testing
     return redirect(url_for('view'))
 
 
-@app.route('/add_file', methods=['GET', 'POST'])
+@app.route('/add_file_object', methods=['GET', 'POST'])
 def add_entry():
     import os
     form = AddFile(request.form)
     new_file = form.new_file._value().replace("\"", '')  # File path
     is_file = os.path.isfile(new_file)
+    is_dir = os.path.dirname(new_file) == new_file
 
-    if form.validate() and is_file:
-        user = get_user_session()
-        hash_val = hash_it(new_file)
-        add_file(user, new_file, hash_val)
+    if form.validate():
+
+        if is_file:
+            user = get_user_session()
+            hash_val = hash_it(new_file)
+            add_file_object(user, new_file, hash_val)
+
+        elif is_dir:
+            pass
 
         return redirect(url_for('view'))
     else:
