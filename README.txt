@@ -1,4 +1,4 @@
-This is using a Flask layout from a previous project. However, the main functionality is on the page:
+This is using a Flask layout from a previous project. However, the main functionality is on the homepage:
 
 http://localhost/
 or
