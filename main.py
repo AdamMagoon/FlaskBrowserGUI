@@ -9,7 +9,6 @@ from sqlalchemy import Column, Integer, String, create_engine, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, backref
 from flask import Flask, render_template, request, flash, url_for
 
-
 app = Flask(__name__)
 
 engine = create_engine('sqlite:///local_db.sqlite', echo=False)
@@ -132,7 +131,7 @@ def add_file_object(user, path, check_sum):
             check_sum = hash_it(file)
             file_object = File(file_path=file, check_sum=check_sum)
 
-        # new_object = get_directory_object()
+            # new_object = get_directory_object()
 
     else:
         new_object = File(file_path=path, check_sum=check_sum)
