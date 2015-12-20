@@ -123,7 +123,6 @@ def check_sum_all(files):
 
 def add_file_object(user, path, check_sum):
     from os.path import dirname
-
     if path == dirname(path):
         from os import listdir
 
@@ -171,6 +170,14 @@ def get_user_session():
         user_q = session.query(User).filter(User.u_name == user_name).first()
 
     return user_q
+
+
+def get_local_ip():
+    import socket as s
+    con = s.socket(s.AF_INET, s.SOCK_DGRAM)
+    con.connect(('8.8.8.8', 0))
+    local_ip = con.getsockname()[0]
+    return local_ip
 
 
 @app.route('/handle_form', methods=['POST'])
@@ -244,22 +251,19 @@ def add_entry():
 @app.route('/', methods=['GET', 'POST'])
 def view():
     payload = []  # Return values | list of tuples
+    local_ip = get_local_ip()
 
     # Here's our user
     user = get_user_session()
-    user_name = user.u_name
-    hostname = user.hostname
-    stored = user.files
 
-    for file in stored:
+    for file in user.files:
         fp = file.file_path
         current_check_sum = hash_it(fp)  # Function that goes to hash the file right now
-        file.file_path = file.file_path
         file_data = (file, current_check_sum)
         payload.append(file_data)
 
-    return render_template('check_sums.html', form=AddFile(), check_sum_results=payload, u_name=user_name,
-                           h_name=hostname)
+    return render_template('check_sums.html', form=AddFile(), check_sum_results=payload,
+                           u_name=user.u_name, h_name=user.hostname, ip_address=local_ip)
 
 
 if __name__ == '__main__':
