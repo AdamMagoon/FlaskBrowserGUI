@@ -18,7 +18,7 @@
 
 <div class="checkSumWrapper">
 
-    <h2>User: {{ u_name }} - {{ h_name }} </h2>
+    <h2>{{ u_name }} <wbr>| {{ h_name }} <wbr>| {{ ip_address }}</h2>
 
     <form method="post" name="handle_file" id="handle_file" action="{{ url_for('handle_form') }}" >
         <input type="hidden" name="del_value" id="del_value" />
@@ -52,5 +52,4 @@
         <!--</ul>-->
     {% endfor %}
 </div>
-
 {% endblock %}
